@@ -1,0 +1,25 @@
+{{define "menu.html"}}
+<aside class="menu" style="background-color: whitesmoke ;padding: 10px;">
+  <p class="menu-label">
+    {{.user}}'s Rooms
+  </p>
+  <ul class="menu-list">
+    <li><a>Create New Room</a></li>
+    <li><a>List Rooms</a></li>
+  </ul>
+    <p class="menu-label">
+    {{.user}}'s Contacts
+  </p>
+  <ul class="menu-list">
+    <li><a>List Contacts</a></li>
+    <li><a>Wait list</a></li>
+    <li><a>Black list</a></li>
+  </ul>
+  <p class="menu-label">
+    Settings
+  </p>
+  <ul class="menu-list">
+    <li><a>Profile</a></li>
+  </ul>
+</aside>
+{{end}}

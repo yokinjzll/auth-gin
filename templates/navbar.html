@@ -1,0 +1,35 @@
+{{define "navbar.html"}}
+
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+        <img src="/assets/logo.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
+      </a>
+      {{if .user}}
+      <div class="d-flex flex-row bd-highlight">
+        <div class="p-2"><a class="navbar-brand" href="/">
+          <img src="/assets/logo.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
+        </a></div>
+        <div class="p-2 bd-highlight"><a class="nav-link active" aria-current="page" href="/dashboard">Dashboard</a></div>
+        <div class="p-2 bd-highlight">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/dashboard" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <strong>{{.user}}</strong>
+            </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="nav-link" href="/profile/{{.user_id}}">Profile</a></li>
+            <li><a class="nav-link" href="/logout">Log out</a></li>
+          </ul>
+          </li>
+        </div>
+      </div>
+          {{else}}
+          <div class="d-flex flex-row-reverse bd-highlight">
+            <div class="p-2 bd-highlight"><a class="nav-link" href="/login">Log in</a></div>
+            <div class="p-2 bd-highlight"><a class="nav-link" href="/register">Register</a></div>
+          </div>
+          {{end}}
+        </div>
+  </div>
+</nav>
+{{end}}

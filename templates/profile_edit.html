@@ -1,0 +1,41 @@
+{{template "header.html" .}}
+<section  style="background-color: #929c91;min-height:100%;">
+<div class="container">
+    <form method="post">
+        {{if .content}}
+            <div class="row justify-content-center">
+                <div class="col-4 gy-2">
+                    <h2>{{.content}}</h1>
+                </div>
+            </div>
+        {{end}}
+        
+        <div class="row justify-content-center">
+            <div class="col-4 gy-5">
+                <div class="card p-3 " style="width: 20rem;">
+                    <div class="card-header">
+                        Edit profile
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">@{{.user}}</span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="first-name" placeholder="First Name" aria-label="First Name" aria-describedby="basic-addon1" value="{{.user_details.First_name}}">
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="last-name" placeholder="Last Name" aria-label="Last Name" aria-describedby="basic-addon1" value="{{.user_details.Last_name}}">
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="date" class="form-control" name="date-of-birth" placeholder="Date of birth" aria-label="Date of birth" aria-describedby="basic-addon1" value="{{.user_details.Dob}}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </form>
+</div>
+</section>
+{{template "footer.html"}}

@@ -1,0 +1,17 @@
+{{template "header.html" .}}
+
+<section  style="background-color: #929c91;min-height:100%;">
+<div class="container">
+    <h1 class="title">
+        Dashboard
+    </h1>
+
+    <div class="row">
+        <div class="col-md-3">{{template "menu.html" .}}</div>
+        <div class="col-md-7">
+            <p  style="background-color: whitesmoke; padding: 10px;">{{.content}}</p>
+        </div>
+    </div>
+</div>
+</section>
+{{template "footer.html"}}

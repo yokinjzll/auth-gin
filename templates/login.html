@@ -1,0 +1,36 @@
+{{template "header.html" .}}
+
+<section  style="background-color: #929c91;min-height:100%;">
+    <form  method="post">
+        {{if .content}}
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <p>{{.content}}</p>
+                </div>
+            </div>
+        {{end}}
+        
+        <div class="row justify-content-center">
+            <div class="col-4 gy-5">
+                <div class="card" style="width: 20rem;">
+                    <div class="card-header">
+                        Log In
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">@</span>
+                            <input type="text" class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" required>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" class="form-control" name="password" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </form>
+</section>
+
+{{template "footer.html"}}

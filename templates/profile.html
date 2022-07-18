@@ -1,0 +1,85 @@
+{{template "header.html" .}}
+
+<section  style="background-color: #929c91;min-height:100%;">
+    <div class="container py-5">
+  
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <img src="/assets/logo.png" alt="avatar"
+                class="rounded-circle img-fluid" style="width: 250px;">
+              <h5 class="my-3">{{.user_details.First_name}} {{.user_details.Last_name}}</h5>
+              <p class="text-muted mb-1">@{{.user}}</p>
+              <div class="d-flex justify-content-center mb-2">
+                <button type="button" class="btn btn-primary">Follow</button>
+                <button type="button" class="btn btn-outline-primary ms-1">Message</button>
+              </div>
+              <div class="d-flex justify-content-center mb-2">
+                <button type="button" class="btn btn-outline-primary ms-1"><a class="nav-link" href="/profile/edit/">Edit</a></button>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body p-0">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-4 mb-md-0">
+                            <div class="card-body">
+                                Bio
+                                {{.bio}}
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam fuga ad error a nostrum maxime at quibusdam ab architecto, facilis impedit iusto est id, unde sequi laboriosam dolores, quam ea?
+                                Lorem ipsum elit. Ipsum soluta maxime totam voluptatem minus laboriosam. Eos laborum excepturi assumenda libero illum repellendus dicta?
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Full Name</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{.user_details.First_name}} {{.user_details.Last_name}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Username</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">@{{.user}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Date of Birth</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{.user_details.Dob}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4 mb-md-0">
+                    <div class="card-body">
+                        <h1>Hi</h1>
+                        <p>{{.content}}</p>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{{template "footer.html"}}
