@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"gin-chat/pkg/models"
+	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -50,16 +51,20 @@ func (m *UserModel) Auth(username, password string) (int, error) {
 	err := row.Scan(&u.ID, &u.Username, &u.Password)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
+			log.Println(err)
 			return 0, models.ErrNoRecord
 		} else {
+			log.Println(err)
 			return 0, err
 		}
 	}
 
 	checkhash := CheckPasswordHash(password, u.Password)
 	if !checkhash {
+		log.Println(err)
 		return 0, err
 	}
+	log.Println(u.ID, u.Username)
 	return u.ID, nil
 
 }

@@ -1,7 +1,9 @@
 # Auth-gin
-##### _Reginster and login on golang gin_
+##### _Register and login on golang gin_
 
-### _Current version have many bugs!!!_
+
+|  ## _Current version have many bugs!!!_   |
+---------------------------------------------
 
 ## Features
 
@@ -9,6 +11,7 @@
 - change profile info
 - on Bootstrap 5
 - use framefork Gin on Golang
+- connect to MySQL
 
  
 ## Get started
@@ -21,9 +24,9 @@ $ migrate -path db/migration -database "mysql://<db_user>:<user_password>@tcp(lo
 ```sh
 $ migrate create -ext sql -dir db/migration -seq <name_migration> 
 ```
-3. Set environment variable DNS for connect to database:
+3. Set environment variable DSN for connect to database:
 ```sh
-export DNS=<db_user>:<user_password>@/<db_name>?Time=true
+export DSN=<db_user>:<user_password>@/<db_name>?parseTime=true
 ```
 
 Next launch server and enjoy:

@@ -13,13 +13,16 @@ func CheckUserPass(username, password string) bool {
 
 	db, err, _ := OpenDB(globals.Dsn)
 	if err != nil {
+		log.Println("error open db")
 		log.Println(err)
+		return false
 	}
 	defer db.Close()
 
 	usermodel := mysql.UserModel{DB: db}
 	userid, err := usermodel.Auth(username, password)
 	if err != nil {
+		log.Panicln("error auth!")
 		log.Println(err)
 		return false
 	}

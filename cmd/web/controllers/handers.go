@@ -40,8 +40,7 @@ func LoginPostHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		user := session.Get(globals.Userkey)
-		// user_id := session.Get(globals.UserID)
-		// user_id := c.Param("user_id")
+
 		if user != nil {
 			c.HTML(http.StatusBadRequest, "login.html", gin.H{"content": "Please logout first"})
 			return
@@ -76,30 +75,11 @@ func LoginPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		// str_user_id := fmt.Sprintf("%v", user_id)
-
-		// dbUserDetail, err, _ := helpers.OpenDB(globals.Dsn)
-		// if err != nil {
-		// 	log.Println(err)
-		// 	c.HTML(http.StatusUnauthorized, "login.html", gin.H{"content": "Ошибка при открытии бд.", "user": user})
-		// 	return
-		// }
-		// defer dbUserDetail.Close()
-
-		// userdetailsmodel := mysql.UserDetailModel{DB: dbUserDetail}
-		// user_details, err := userdetailsmodel.Get(str_user_id)
-		// if err != nil {
-		// 	log.Println(err)
-		// 	c.HTML(http.StatusUnauthorized, "login.html", gin.H{"content": "Ошибка получения данный из бд.", "user": user})
-		// 	return
-		// }
-
 		session.Set(globals.Userkey, username)
 		session.Set(globals.UserID, user_id)
-		// session.Set(globals.UserDetail, user_details)
 		if err := session.Save(); err != nil {
 			log.Println(err)
-			c.HTML(http.StatusInternalServerError, "login.html", gin.H{"content": "Failed to save session", "user": user})
+			c.HTML(http.StatusInternalServerError, "login.html", gin.H{"content": "Failed to save session"})
 			return
 		}
 
@@ -111,16 +91,11 @@ func LogoutGetHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		user := session.Get(globals.Userkey)
-		// user_id := session.Get(globals.UserID)
-		// user_details := session.Get(globals.UserDetail)
 		log.Println("logging out user:", user)
 		if user == nil {
 			log.Println("Invalid session token")
 			return
 		}
-		// session.Delete(globals.Userkey)
-		// session.Delete(globals.UserID)
-		// session.Delete(globals.UserDetail)
 		session.Clear()
 		session.Options(sessions.Options{MaxAge: -1})
 		if err := session.Save(); err != nil {
@@ -137,12 +112,10 @@ func IndexGetHandler() gin.HandlerFunc {
 		session := sessions.Default(c)
 		user := session.Get(globals.Userkey)
 		user_id := session.Get(globals.UserID)
-		user_details := session.Get(globals.UserDetail)
 		c.HTML(http.StatusOK, "index.html", gin.H{
-			"content":      "This is an index page...",
-			"user":         user,
-			"user_id":      user_id,
-			"user_details": user_details,
+			"content": "This is an index page...",
+			"user":    user,
+			"user_id": user_id,
 		})
 	}
 }
@@ -153,6 +126,7 @@ func DashboardGetHandler() gin.HandlerFunc {
 		user := session.Get(globals.Userkey)
 		user_id := session.Get(globals.UserID)
 		str_user_id := fmt.Sprintf("%v", user_id)
+		log.Println("user ud:", user_id, "str user id", str_user_id)
 
 		dbUserDetail, err, _ := helpers.OpenDB(globals.Dsn)
 		if err != nil {
@@ -163,6 +137,7 @@ func DashboardGetHandler() gin.HandlerFunc {
 		userdetailsmodel := mysql.UserDetailModel{DB: dbUserDetail}
 		user_details, err := userdetailsmodel.Get(str_user_id)
 		if err != nil {
+			log.Println(err)
 			c.HTML(http.StatusBadRequest, "dashboard.html", gin.H{"content": "Не удалость загрузить данные."})
 			return
 		}
@@ -198,9 +173,9 @@ func RegisterPostHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		user := session.Get(globals.Userkey)
-		// user_id := session.Get(globals.UserID)
+
 		if user != nil {
-			c.HTML(http.StatusBadRequest, "register.html", gin.H{"content": "Please logout first", "user": user})
+			c.HTML(http.StatusBadRequest, "register.html", gin.H{"content": "Please logout first"})
 			return
 		}
 
@@ -215,6 +190,8 @@ func RegisterPostHandler() gin.HandlerFunc {
 		dbUser, err, _ := helpers.OpenDB(globals.Dsn)
 		if err != nil {
 			log.Println(err)
+			c.HTML(http.StatusInternalServerError, "register.html", gin.H{"content": "Не удалость подключиться к базе данных. :с"})
+			return
 		}
 		defer dbUser.Close()
 
@@ -222,29 +199,29 @@ func RegisterPostHandler() gin.HandlerFunc {
 		user_id, err := usermodel.Insert(username, password)
 		if err != nil {
 			log.Println(err)
+			c.HTML(http.StatusInternalServerError, "register.html", gin.H{"content": "Не удалось создать пользователя."})
+			return
 		}
 
-		// dobtime, err := time.Parse("2006-01-02", dob)
 		nowtime := time.Now()
 		userstructsend := models.UserDetails{UserID: user_id, First_name: first_name, Last_name: last_name, Dob: dob, Created_at: nowtime}
 
 		dbUserDetail, err, _ := helpers.OpenDB(globals.Dsn)
 		if err != nil {
 			log.Println(err)
+			c.HTML(http.StatusInternalServerError, "register.html", gin.H{"content": "Не удалость подключиться к базе данных. :с"})
+			return
 		}
 		defer dbUserDetail.Close()
 
 		userdetailsmodel := mysql.UserDetailModel{DB: dbUserDetail}
 		usersendDetailID, err := userdetailsmodel.Insert(userstructsend)
 		if err != nil {
+			log.Println(err)
 			c.HTML(http.StatusBadRequest, "register.html", gin.H{"content": "Не удалость загрузить данные."})
 			return
 		}
-
-		// user_details, err := userdetailsmodel.Get(usersendDetailID)
-		// if err != nil {
-		// 	log.Println(err)
-		// }
+		log.Println(usersendDetailID)
 
 		if helpers.EmptyUserDetails(username, password, password_confirm, first_name, last_name, dob) {
 			c.HTML(http.StatusBadRequest, "register.html", gin.H{"content": "Parameters can't be empty"})
@@ -256,24 +233,7 @@ func RegisterPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		// if !helpers.CheckUserPass(username, password) {
-		// 	c.HTML(http.StatusUnauthorized, "login.html", gin.H{"content": "Incorrect username or password"})
-		// 	return
-		// }
-
-		// in future add more validation on check username and password
-
-		session.Set(globals.Userkey, username)
-		session.Set(globals.UserID, usersendDetailID)
-		session.Set(globals.UserDetail, userstructsend)
-		// session.Set(globals.UserDetail, user_details)
-		if err := session.Save(); err != nil {
-			c.HTML(http.StatusInternalServerError, "register.html", gin.H{"content": "Failed to save session"})
-			return
-		}
-
-		// c.HTML(http.StatusInternalServerError, "register.html", gin.H{"content": "Failed to save session"})
-		c.Redirect(http.StatusMovedPermanently, "/dashboard")
+		c.Redirect(http.StatusMovedPermanently, "/")
 	}
 }
 
@@ -281,11 +241,8 @@ func ProfileGetHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		user := session.Get(globals.Userkey)
-		// user_id := session.Get(globals.UserID)
 		userid := c.Param("userid")
 		log.Println(userid)
-		// session.Set(globals.UserID, user_id)
-		// useridsession := session.Get(globals.UserID)
 
 		dbUserDetail, err, _ := helpers.OpenDB(globals.Dsn)
 		if err != nil {
@@ -296,7 +253,7 @@ func ProfileGetHandler() gin.HandlerFunc {
 		if err != nil {
 			log.Println(err)
 		}
-		// user_det := session.Get(globals.UserDetail)
+
 		c.HTML(http.StatusOK, "profile.html", gin.H{
 			"content":      "This is a your profile.",
 			"user":         user,
@@ -327,10 +284,6 @@ func ProfileEditGetHandler() gin.HandlerFunc {
 			return
 		}
 
-		// dob := c.PostForm("date-of-birth")
-		// log.Println(dob)
-		// user_details.Dob = time.Parse("", user_details.Dob)
-
 		c.HTML(http.StatusOK, "profile_edit.html", gin.H{
 			"content":      "This is a your profile editor.",
 			"user":         user,
@@ -351,7 +304,6 @@ func ProfileEditPostHandler() gin.HandlerFunc {
 		if err != nil {
 			log.Println(err)
 		}
-		// user_det := session.Get(globals.UserDetail)
 
 		first_name := c.PostForm("first-name")
 		last_name := c.PostForm("last-name")
@@ -398,16 +350,6 @@ func ProfileEditPostHandler() gin.HandlerFunc {
 		}
 
 		log.Println(user_details.Dob)
-		// session.Set(globals.UserDetail, user_details)
-
-		// c.HTML(http.StatusOK, "profile_edit.html", gin.H{
-		// 	"content":      "This is a your profile editor.",
-		// 	"user":         user,
-		// 	"user_id":      user_id,
-		// 	"user_details": user_details,
-		// })
-
-		// var url_redirect string = "profile/" + int_user_id
 
 		c.Redirect(http.StatusMovedPermanently, "/profile/"+str_user_id)
 	}
