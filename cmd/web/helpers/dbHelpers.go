@@ -2,8 +2,13 @@ package helpers
 
 import (
 	"database/sql"
+	"gin-chat/pkg/models/mysql"
+	"log"
 	"strings"
 )
+
+var dbUserModel *mysql.UserModel
+var dbUserDetailsModel *mysql.UserDetailsModel
 
 func EmptyUserDetails(username, password, password_confirm, first_name, last_name, dob string) bool {
 
@@ -26,4 +31,30 @@ func OpenDB(dsn string) (*sql.DB, error, bool) {
 		return nil, err, false
 	}
 	return db, nil, true
+}
+
+func SetUserModel(db *sql.DB, err error) {
+	dbUserModel = &mysql.UserModel{DB: db}
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	return
+}
+
+func SetUserDetailsModel(db *sql.DB, err error) {
+	dbUserDetailsModel = &mysql.UserDetailsModel{DB: db}
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	return
+}
+
+func GetUserModel() *mysql.UserModel {
+	return dbUserModel
+}
+
+func GetUserDetailsModel() *mysql.UserDetailsModel {
+	return dbUserDetailsModel
 }

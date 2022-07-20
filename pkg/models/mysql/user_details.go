@@ -6,11 +6,11 @@ import (
 	"gin-chat/pkg/models"
 )
 
-type UserDetailModel struct {
+type UserDetailsModel struct {
 	DB *sql.DB
 }
 
-func (udm *UserDetailModel) Insert(ud models.UserDetails) (int64, error) {
+func (udm *UserDetailsModel) Insert(ud models.UserDetails) (int64, error) {
 
 	stmp := `INSERT INTO user_details (user_id, first_name, last_name, dob, created_at)
 	VALUES(?, ?, ?, ?, UTC_TIMESTAMP())`
@@ -27,7 +27,7 @@ func (udm *UserDetailModel) Insert(ud models.UserDetails) (int64, error) {
 	return id, nil
 }
 
-func (udm *UserDetailModel) Get(id string) (*models.UserDetails, error) {
+func (udm *UserDetailsModel) Get(id string) (*models.UserDetails, error) {
 	stmt := `SELECT user_id, first_name, last_name, dob, created_at FROM user_details WHERE user_id = ?`
 
 	row := udm.DB.QueryRow(stmt, id)
@@ -43,7 +43,7 @@ func (udm *UserDetailModel) Get(id string) (*models.UserDetails, error) {
 	return u, nil
 }
 
-func (udm *UserDetailModel) SetByID(id string, ud models.UserDetails) bool {
+func (udm *UserDetailsModel) SetByID(id string, ud models.UserDetails) bool {
 	req := `UPDATE user_details SET first_name = ?, last_name = ?, dob = ? WHERE user_id = ?`
 
 	_, err := udm.DB.Exec(req, &ud.First_name, &ud.Last_name, &ud.Dob, &ud.UserID)

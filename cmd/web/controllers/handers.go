@@ -15,7 +15,6 @@ import (
 	globals "gin-chat/cmd/web/globals"
 	helpers "gin-chat/cmd/web/helpers"
 	"gin-chat/pkg/models"
-	"gin-chat/pkg/models/mysql"
 )
 
 func LoginGetHandler() gin.HandlerFunc {
@@ -59,15 +58,7 @@ func LoginPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		db, err, _ := helpers.OpenDB(globals.Dsn)
-		if err != nil {
-			log.Println(err)
-			c.HTML(http.StatusUnauthorized, "login.html", gin.H{"content": "Database's trables"})
-			return
-		}
-		defer db.Close()
-
-		usermodel := mysql.UserModel{DB: db}
+		usermodel := helpers.GetUserModel()
 		user_id, err := usermodel.Auth(username, password)
 		if err != nil {
 			log.Println(err)
@@ -93,13 +84,15 @@ func LogoutGetHandler() gin.HandlerFunc {
 		user := session.Get(globals.Userkey)
 		log.Println("logging out user:", user)
 		if user == nil {
-			log.Println("Invalid session token")
+			log.Println("User not logged in")
+			c.HTML(http.StatusInternalServerError, "login.html", gin.H{"content": "User not logged in"})
 			return
 		}
 		session.Clear()
 		session.Options(sessions.Options{MaxAge: -1})
 		if err := session.Save(); err != nil {
 			log.Println("Failed to save session:", err)
+			c.HTML(http.StatusInternalServerError, "login.html", gin.H{"content": "Failed to save session"})
 			return
 		}
 
@@ -128,13 +121,7 @@ func DashboardGetHandler() gin.HandlerFunc {
 		str_user_id := fmt.Sprintf("%v", user_id)
 		log.Println("user ud:", user_id, "str user id", str_user_id)
 
-		dbUserDetail, err, _ := helpers.OpenDB(globals.Dsn)
-		if err != nil {
-			log.Println(err)
-		}
-		defer dbUserDetail.Close()
-
-		userdetailsmodel := mysql.UserDetailModel{DB: dbUserDetail}
+		userdetailsmodel := helpers.GetUserDetailsModel()
 		user_details, err := userdetailsmodel.Get(str_user_id)
 		if err != nil {
 			log.Println(err)
@@ -187,15 +174,8 @@ func RegisterPostHandler() gin.HandlerFunc {
 		dob := c.PostForm("date-of-birth")
 
 		log.Println(username, password, password_confirm, first_name, last_name, dob)
-		dbUser, err, _ := helpers.OpenDB(globals.Dsn)
-		if err != nil {
-			log.Println(err)
-			c.HTML(http.StatusInternalServerError, "register.html", gin.H{"content": "Не удалость подключиться к базе данных. :с"})
-			return
-		}
-		defer dbUser.Close()
 
-		usermodel := mysql.UserModel{DB: dbUser}
+		usermodel := helpers.GetUserModel()
 		user_id, err := usermodel.Insert(username, password)
 		if err != nil {
 			log.Println(err)
@@ -206,15 +186,7 @@ func RegisterPostHandler() gin.HandlerFunc {
 		nowtime := time.Now()
 		userstructsend := models.UserDetails{UserID: user_id, First_name: first_name, Last_name: last_name, Dob: dob, Created_at: nowtime}
 
-		dbUserDetail, err, _ := helpers.OpenDB(globals.Dsn)
-		if err != nil {
-			log.Println(err)
-			c.HTML(http.StatusInternalServerError, "register.html", gin.H{"content": "Не удалость подключиться к базе данных. :с"})
-			return
-		}
-		defer dbUserDetail.Close()
-
-		userdetailsmodel := mysql.UserDetailModel{DB: dbUserDetail}
+		userdetailsmodel := helpers.GetUserDetailsModel()
 		usersendDetailID, err := userdetailsmodel.Insert(userstructsend)
 		if err != nil {
 			log.Println(err)
@@ -244,14 +216,12 @@ func ProfileGetHandler() gin.HandlerFunc {
 		userid := c.Param("userid")
 		log.Println(userid)
 
-		dbUserDetail, err, _ := helpers.OpenDB(globals.Dsn)
-		if err != nil {
-			log.Println(err)
-		}
-		userdetailsmodel := mysql.UserDetailModel{DB: dbUserDetail}
+		userdetailsmodel := helpers.GetUserDetailsModel()
 		user_details, err := userdetailsmodel.Get(userid)
 		if err != nil {
 			log.Println(err)
+			c.HTML(http.StatusInternalServerError, "profile.html", gin.H{"content": "Не удалось загрузить данные пользователя."})
+			return
 		}
 
 		c.HTML(http.StatusOK, "profile.html", gin.H{
@@ -270,13 +240,7 @@ func ProfileEditGetHandler() gin.HandlerFunc {
 		user_id := session.Get(globals.UserID)
 		str_user_id := fmt.Sprintf("%v", user_id)
 
-		dbUserDetail, err, _ := helpers.OpenDB(globals.Dsn)
-		if err != nil {
-			log.Println("[error]", err, "db not open")
-		}
-		defer dbUserDetail.Close()
-
-		userdetailsmodel := mysql.UserDetailModel{DB: dbUserDetail}
+		userdetailsmodel := helpers.GetUserDetailsModel()
 		user_details, err := userdetailsmodel.Get(str_user_id)
 		if err != nil {
 			c.HTML(http.StatusBadRequest, "profile_edit.html", gin.H{
@@ -309,14 +273,7 @@ func ProfileEditPostHandler() gin.HandlerFunc {
 		last_name := c.PostForm("last-name")
 		dob := c.PostForm("date-of-birth")
 
-		log.Println("edit dob to ", dob)
-
-		dbUserDetail, err, _ := helpers.OpenDB(globals.Dsn)
-		if err != nil {
-			log.Println(err)
-		}
-		defer dbUserDetail.Close()
-		userdetailsmodel := mysql.UserDetailModel{DB: dbUserDetail}
+		userdetailsmodel := helpers.GetUserDetailsModel()
 
 		userstructsend := models.UserDetails{UserID: int_user_id, First_name: first_name, Last_name: last_name, Dob: dob}
 		user_details_old, err := userdetailsmodel.Get(str_user_id)
