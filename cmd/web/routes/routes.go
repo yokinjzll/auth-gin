@@ -10,8 +10,8 @@ func PublicRoutes(g *gin.RouterGroup) {
 	g.GET("/login", controllers.LoginGetHandler())
 	g.POST("/login", controllers.LoginPostHandler())
 	g.GET("/", controllers.IndexGetHandler())
-	g.GET("/register", controllers.RegisterGetHandler())
-	g.POST("/register", controllers.RegisterPostHandler())
+	g.GET("/registration", controllers.RegistrationGetHandler())
+	g.POST("/registration", controllers.RegistrationPostHandler())
 }
 
 func PrivateRoutes(g *gin.RouterGroup) {

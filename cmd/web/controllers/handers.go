@@ -138,31 +138,31 @@ func DashboardGetHandler() gin.HandlerFunc {
 	}
 }
 
-func RegisterGetHandler() gin.HandlerFunc {
+func RegistrationGetHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		user := session.Get(globals.Userkey)
 		if user != nil {
-			c.HTML(http.StatusBadRequest, "register.html", gin.H{
+			c.HTML(http.StatusBadRequest, "registration.html", gin.H{
 				"content": "Please logout first",
 				"user":    user,
 			})
 			return
 		}
-		c.HTML(http.StatusOK, "register.html", gin.H{
+		c.HTML(http.StatusOK, "registration.html", gin.H{
 			"content": "",
 			"user":    user,
 		})
 	}
 }
 
-func RegisterPostHandler() gin.HandlerFunc {
+func RegistrationPostHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		user := session.Get(globals.Userkey)
 
 		if user != nil {
-			c.HTML(http.StatusBadRequest, "register.html", gin.H{"content": "Please logout first"})
+			c.HTML(http.StatusBadRequest, "registration.html", gin.H{"content": "Please logout first"})
 			return
 		}
 
@@ -179,7 +179,7 @@ func RegisterPostHandler() gin.HandlerFunc {
 		user_id, err := usermodel.Insert(username, password)
 		if err != nil {
 			log.Println(err)
-			c.HTML(http.StatusInternalServerError, "register.html", gin.H{"content": "Не удалось создать пользователя."})
+			c.HTML(http.StatusInternalServerError, "registration.html", gin.H{"content": "Не удалось создать пользователя."})
 			return
 		}
 
@@ -190,18 +190,18 @@ func RegisterPostHandler() gin.HandlerFunc {
 		usersendDetailID, err := userdetailsmodel.Insert(userstructsend)
 		if err != nil {
 			log.Println(err)
-			c.HTML(http.StatusBadRequest, "register.html", gin.H{"content": "Не удалость загрузить данные."})
+			c.HTML(http.StatusBadRequest, "registration.html", gin.H{"content": "Не удалость загрузить данные."})
 			return
 		}
 		log.Println(usersendDetailID)
 
 		if helpers.EmptyUserDetails(username, password, password_confirm, first_name, last_name, dob) {
-			c.HTML(http.StatusBadRequest, "register.html", gin.H{"content": "Parameters can't be empty"})
+			c.HTML(http.StatusBadRequest, "registration.html", gin.H{"content": "Parameters can't be empty"})
 			return
 		}
 
 		if !helpers.EqualPasswords(password, password_confirm) {
-			c.HTML(http.StatusBadRequest, "register.html", gin.H{"content": "Passwords are not equals!"})
+			c.HTML(http.StatusBadRequest, "registration.html", gin.H{"content": "Passwords are not equals!"})
 			return
 		}
 
